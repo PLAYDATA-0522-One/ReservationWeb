@@ -53,6 +53,9 @@ public class ModuleManager {
             default:
                 break;
         }
+
+        if (nowModule != null)
+            nowModule.init();
     }
 
     public ModuleType getNowModuleType(){

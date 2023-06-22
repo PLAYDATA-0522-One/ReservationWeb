@@ -57,7 +57,7 @@
     <% boolean isLogin = false;
         String loginID = "";
         Cookie[] cookies = request.getCookies();
-        for (int i = 0; i < cookies.length; i++) {
+        for (var i = 0; i < cookies.length; i++) {
             if (cookies[i].getName().equals("LoginID")) {
                 isLogin = true;
                 loginID = cookies[i].getValue();

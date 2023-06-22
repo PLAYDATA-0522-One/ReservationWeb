@@ -109,7 +109,6 @@
     <url-pattern>/forgot</url-pattern>
   </servlet-mapping>
 
-<<<<<<< HEAD
   <servlet>
     <servlet-name>successServlet</servlet-name>
     <servlet-class>Servlet.SuccessServlet</servlet-class>

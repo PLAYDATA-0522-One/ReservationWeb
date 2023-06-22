@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
 
 import Enums.ModuleType;
 import Module.ModuleManager;
@@ -23,7 +25,26 @@ public class addAirplaneServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //super.doPost(req, resp);
+        EditModule module = getEditModule();
+
+        String airplaneName = req.getParameter("airplaneName");
+        String departureTime = req.getParameter("departureTime");
+        String departureAirport = req.getParameter("departureAirport");
+        String arrivalAirport = req.getParameter("arrivalAirport");
+
+        if (module.insertAirplane(airplaneName, departureTime, departureAirport, arrivalAirport)){
+            //성공 알림
+            resp.setContentType("text/html; charset=UTF-8");
+            PrintWriter writer = resp.getWriter();
+            writer.println("<script>alert('추가성공');  location.href='/addAirplane'; </script>");
+            writer.close();
+        }
+        else {
+            resp.setContentType("text/html; charset=UTF-8");
+            PrintWriter writer = resp.getWriter();
+            writer.println("<script>alert('추가실패');  location.href='/addAirplane'; </script>");
+            writer.close();
+        }
     }
 
     private EditModule getEditModule(){

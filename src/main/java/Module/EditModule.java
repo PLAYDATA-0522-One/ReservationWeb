@@ -109,7 +109,7 @@ public class EditModule extends ModuleBase {
         return result;
     }
 
-    public void insertAirplane(String airplaneName, String date, String startDestination, String endDestination) {
+    public boolean insertAirplane(String airplaneName, String date, String startDestination, String endDestination) {
         // 비행기 테이블에 비행기 정보 임의로 insert
         Connection conn = new JdbcConnection().getJdbc();
 
@@ -129,13 +129,17 @@ public class EditModule extends ModuleBase {
                 System.out.println("insert airplane 성공");
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println("쿼리 확인할것");
+            return  false;
         }
         try {
             conn.close();
         } catch (SQLException e) {
             System.out.println("sql close fail");
+            return false;
         }
+
+        return true;
     }
 
     private void deleteAirplane() {

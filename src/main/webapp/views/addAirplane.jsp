@@ -43,7 +43,7 @@
     <input type="text" id="airplaneName" name="airplaneName" required>
 
     <label for="departureTime">Departure Time:</label>
-    <input type="text" id="departureTime" name="departureTime" required>
+    <input type="date" id="departureTime" name="departureTime" required>
 
     <label for="departureAirport">Departure Airport:</label>
     <input type="text" id="departureAirport" name="departureAirport" required>

@@ -129,8 +129,8 @@ public class EditModule extends ModuleBase {
                 System.out.println("insert airplane 성공");
             }
         } catch (SQLException e) {
-            System.out.println("쿼리 확인할것");
-            return  false;
+            System.out.println("쿼리 확인");
+            return false;
         }
         try {
             conn.close();

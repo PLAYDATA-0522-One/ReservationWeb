@@ -22,9 +22,9 @@ public class ReservationModule extends ModuleBase {
         controller = new ReservationController(sc);
     }
 
-    private List<Airplane> airplaneList = new ArrayList<>();
-    private List<Ticket> ticketList = new ArrayList<>();
-    private List<Seat> seatList = new ArrayList<>();
+    public List<Airplane> airplaneList = new ArrayList<>();
+    public List<Ticket> ticketList = new ArrayList<>();
+    public List<Seat> seatList = new ArrayList<>();
 
     @Override
     protected void init() {
@@ -48,7 +48,7 @@ public class ReservationModule extends ModuleBase {
                 break;
             case 3:
                 //todo 티켓 확인
-                getMyTickets_by_Database();
+//                getMyTickets_by_Database();
                 break;
             case 0:
                 ModuleManager.getInstance().changeModule(ModuleType.MAIN);
@@ -99,20 +99,20 @@ public class ReservationModule extends ModuleBase {
             case 1:
                 getAirPlaneList_by_Database();
                 showAirplaneList();
-                reservationAirPlane_Step2();
+//                reservationAirPlane_Step2();
                 break;
             case 2:
-                reservationAirPlane_Step2();
+//                reservationAirPlane_Step2();
                 break;
             default:
                 break;
         }
     }
 
-    private void reservationAirPlane_Step2() {
+    public void reservationAirPlane_Step2(String airplaneName, String seatName, String userID) {
         //비행기 이름 입력
-        view.printInputAirPlanName();
-        String airplaneName = controller.inputString();
+//        view.printInputAirPlanName();
+//        String airplaneName = controller.inputString();
 
 
         //티켓 생성 전에 비행기 리스트 다시 갱신 (db 로부터 불러오기)
@@ -122,75 +122,77 @@ public class ReservationModule extends ModuleBase {
         Airplane air = findAirPlane(airplaneName);
 
         //air 가 있으면 티켓 생성 없으면 애러 메시지
-        if (air == null) {
-            view.printFindAirplaneError();
-        } else {
-            // 전체 좌석 리스트 출력
-            view.printSeatList();
-            System.out.println(air.getSeatList());
+//        if (air == null) {
+//            view.printFindAirplaneError();
+//        } else {
+        // 전체 좌석 리스트 출력
+//            view.printSeatList();
+        assert air != null;
 
-            // 예매 불가 좌석 리스트 출력
-            view.printReservationSeatList();
-            getSeats_by_Database(air.getAirplaneName());
+        System.out.println(air.getSeatList());
 
-            //좌석 이름 입력
-            view.printInputSeatName();
-            String seatName = controller.inputString();
+        // 예매 불가 좌석 리스트 출력
+//            view.printReservationSeatList();
+//            getSeats_by_Database(air.getAirplaneName());
 
-            if (air.getSeatList().contains(seatName)) {
-                Connection conn = new JdbcConnection().getJdbc();
+        //좌석 이름 입력
+//            view.printInputSeatName();
+//            String seatName = controller.inputString();
 
-                // 티켓 관련 sql
-                String ticketSql = "insert into ticket (userid, airplane_name, departure_time, start_destination, end_destination, seat_name)\n"
-                        + "values (?, ?, ?, ?, ?, ?)";
+        if (air.getSeatList().contains(seatName)) {
+            Connection conn = new JdbcConnection().getJdbc();
 
-                // 좌석 관련 sql
-                String seatSql = "insert into airplane_seat (userid, airplane_name, seat_name)\n"
-                        + "values (?, ?, ?)";
+            // 티켓 관련 sql
+            String ticketSql = "insert into ticket (userid, airplane_name, departure_time, start_destination, end_destination, seat_name)\n"
+                    + "values (?, ?, ?, ?, ?, ?)";
 
-                try {
-                    //db에 티켓 insert
-                    PreparedStatement ticketPst = conn.prepareStatement(ticketSql);
-                    ticketPst.setString(1, DataManager.getInstance().getUser().getUserID());
-                    ticketPst.setString(2, air.getAirplaneName());
-                    ticketPst.setDate(3, air.getDepartureTime());
-                    ticketPst.setString(4, air.getStartDestination());
-                    ticketPst.setString(5, air.getEndDestination());
-                    ticketPst.setString(6, seatName);
+            // 좌석 관련 sql
+            String seatSql = "insert into airplane_seat (userid, airplane_name, seat_name)\n"
+                    + "values (?, ?, ?)";
 
-                    //db에 좌석 insert
-                    PreparedStatement seatPst = conn.prepareStatement(seatSql);
-                    seatPst.setString(1, DataManager.getInstance().getUser().getUserID());
-                    seatPst.setString(2, air.getAirplaneName());
-                    seatPst.setString(3, seatName);
+            try {
+                //db에 티켓 insert
+                PreparedStatement ticketPst = conn.prepareStatement(ticketSql);
+                ticketPst.setString(1, userID);
+                ticketPst.setString(2, air.getAirplaneName());
+                ticketPst.setDate(3, air.getDepartureTime());
+                ticketPst.setString(4, air.getStartDestination());
+                ticketPst.setString(5, air.getEndDestination());
+                ticketPst.setString(6, seatName);
 
-                    if (ticketPst.executeUpdate() == 0 || seatPst.executeUpdate() == 0) {
-                        System.out.println("insert error");
-                    } else {
-                        view.printSuccessAirPlane();
-                    }
+                //db에 좌석 insert
+                PreparedStatement seatPst = conn.prepareStatement(seatSql);
+                seatPst.setString(1, userID);
+                seatPst.setString(2, air.getAirplaneName());
+                seatPst.setString(3, seatName);
 
-                } catch (SQLIntegrityConstraintViolationException e) {
-                    // 티켓 테이블, 좌석 테이블에서 비행기와 좌석 데이터가 동일한 데이터가 들어있으면 예매 불가
-                    System.out.println("해당 좌석을 예매할 수 없습니다.");
-                    return;
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                if (ticketPst.executeUpdate() == 0 || seatPst.executeUpdate() == 0) {
+                    System.out.println("insert error");
+                } else {
+                    view.printSuccessAirPlane();
                 }
 
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    System.out.println("sql close fail");
-                }
-            } else {
-                System.out.println("좌석이 존재하지 않습니다. 다시 입력해주세요");
+            } catch (SQLIntegrityConstraintViolationException e) {
+                // 티켓 테이블, 좌석 테이블에서 비행기와 좌석 데이터가 동일한 데이터가 들어있으면 예매 불가
+                System.out.println("해당 좌석을 예매할 수 없습니다.");
+                return;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
 
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("sql close fail");
+            }
+        } else {
+            System.out.println("좌석이 존재하지 않습니다. 다시 입력해주세요");
         }
+
+//        }
     }
 
-    private void getMyTickets_by_Database() {
+    public List<Ticket> getMyTickets_by_Database(String userID) {
         //비행기 목록 clear
         ticketList.clear();
 
@@ -200,7 +202,7 @@ public class ReservationModule extends ModuleBase {
         try {
 
             PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setString(1, DataManager.getInstance().getUser().getUserID());
+            pst.setString(1, userID);
 
             ResultSet rst = pst.executeQuery();
 
@@ -237,9 +239,10 @@ public class ReservationModule extends ModuleBase {
         } else {
             showTicketList();
         }
+        return ticketList;
     }
 
-    private void getSeats_by_Database(String airplaneName) {
+    public List<Seat> getSeats_by_Database(String airplaneName) {
         // 좌석 목록 clear
         seatList.clear();
 
@@ -283,6 +286,7 @@ public class ReservationModule extends ModuleBase {
         } else {
             System.out.println(seatList);
         }
+        return seatList;
     }
 
     //비행기 리스트 출력
@@ -293,7 +297,7 @@ public class ReservationModule extends ModuleBase {
     }
 
     //비행기 리스트에서 비행기 이름으로 찾기
-    private Airplane findAirPlane(String name) {
+    public Airplane findAirPlane(String name) {
         for (int i = 0; i < airplaneList.size(); i++) {
             if (airplaneList.get(i).getAirplaneName().equals(name))
                 return airplaneList.get(i);

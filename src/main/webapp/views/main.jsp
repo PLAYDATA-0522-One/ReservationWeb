@@ -49,6 +49,7 @@
     </style>
 </head>
 <body>
+<<<<<<< HEAD
 <div class="overlay">
     <span>비행기 예약</span>
 </div>
@@ -62,9 +63,12 @@
                 loginID = cookies[i].getValue();
             }
         }
+    %>
 
-        if (isLogin) { %>
+<%if (isLogin) { %>
     <a href="/reservation">예약</a>
+    <br>
+    <a href="/ticket">티켓</a>
     <br>
     <% } else if (isLogin == true && loginID.isEmpty() == false && loginID.equals("admin")) { %>
     <a href="/edit">개발자 페이지</a>
@@ -74,5 +78,4 @@
     <a href="/signup">회원가입</a>
     <% } %>
 </div>
-</body>
 </html>

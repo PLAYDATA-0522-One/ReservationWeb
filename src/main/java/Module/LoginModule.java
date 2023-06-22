@@ -34,15 +34,17 @@ public class LoginModule extends ModuleBase{
         super.controller = new LoginController(sc);
         this.sc = sc;
     }
-    private boolean login() { //login 메소드로 id pw를 입력받음
+
+
+    public boolean login(String username, String password) { //login 메소드로 id pw를 입력받음
         LoginView loginView = new LoginView();
         LoginView.printenterView1();
         LoginView.printenterView2();
-        username = sc.nextLine();
+        this.username = username;
         LoginView.printenterView3();
-        password = sc.nextLine();
+        this.password = password;
 
-        if (username.trim().isEmpty() ) { // 공백을 입력받을시 error를 출력함
+        if (this.username.trim().isEmpty() ) { // 공백을 입력받을시 error를 출력함
             System.out.println("로그인 실패, 잘못된 입력입니다.");
             return false;
         }
@@ -51,8 +53,8 @@ public class LoginModule extends ModuleBase{
 
         try {   //RreparedStatement클래스인 psmt 인스턴스를 생성하고 천번째, 두번째매개변수에 username과 password를 셋해줌
             PreparedStatement psmt = conn.prepareStatement(sql);    //그리고, ResultSet 클래스인 resultSet변수에 psmt의 쿼리문을 실행하여 결과를 저장함
-            psmt.setString(1, username);
-            psmt.setString(2, password);
+            psmt.setString(1, this.username);
+            psmt.setString(2, this.password);
             ResultSet resultSet = psmt.executeQuery();
 
             if (resultSet.next()) { //resultSet의 다음으로 오는 값 즉, 초기값이 쿼리에 있는 username, password과 같은지를 확인해서 만약 다 일치한다면, 환영문구를 띄움.
@@ -64,9 +66,9 @@ public class LoginModule extends ModuleBase{
                 User user = new User(id0, username0, password0, name0);
 
                 DataManager.getInstance().setUser(user);
-                System.out.println(username + " " + name0 + " 환영해요");
+                System.out.println(this.username + " " + name0 + " 환영해요");
 
-                System.out.println(username + " " + name0+"님 환영합니다.");
+                System.out.println(this.username + " " + name0+"님 환영합니다.");
 
                 return true;
             } else {
@@ -87,22 +89,22 @@ public class LoginModule extends ModuleBase{
     }
 
 
-    private void signup() { //signup 메소드로 id pw 이름를 입력받음
+    public boolean signup(String username, String password, String name) { //signup 메소드로 id pw 이름를 입력받음
         Connection conn = new JdbcConnection().getJdbc();
 
         LoginView loginView = new LoginView();
 
         LoginView.printsignView1();
         LoginView.printsignView2();
-        username = sc.nextLine();
+        this.username = username;
         LoginView.printsignView3();
-        password = sc.nextLine();
+        this.password = password;
         LoginView.printsignView4();
-        name = sc.nextLine();;
+        this.name = name;
 
         if (!isPasswordValid(password)) { // 패스워드가 유효를 메소드에서 검사함 (참인지것지인지)
             System.out.println("ERROR: 비밀번호가 적어도 한개 이상의 특수문자와 대문자를 포함해야 합니다.");
-            return;
+            return false;
         }else{System.out.println("사용가능한 비밀번호입니다!");
         }
 
@@ -113,7 +115,7 @@ public class LoginModule extends ModuleBase{
 
             if (resultSet.next()) { ////resultSet의 다음으로 오는 값 즉, 초기값이 쿼리에 있는 username이 db에 있다면 if문 실행하고 if문 종료
                 System.out.println("ERROR: 유저가 이미 존재합니다!");
-                return;
+                return false;
             }
 
             // 유저 생성: sql에서 받아온 (username, password, name)을 insertStmt로 선언
@@ -128,7 +130,7 @@ public class LoginModule extends ModuleBase{
 
             } else {
                 System.out.println("ERROR: 유저 등록 실패!");
-                return;
+                return false;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -141,6 +143,8 @@ public class LoginModule extends ModuleBase{
                 throw new RuntimeException(e);
             }
         }
+
+        return false;
     }
 
     private boolean isPasswordValid(String password) { //비밀번호가 반드시 한개의 특수문자나 대문자를 포함하는지 불린 메소드로 생성
@@ -168,15 +172,15 @@ public class LoginModule extends ModuleBase{
         return hasSpecialCharacter && hasUppercaseLetter; // 최종적으로  hasSpecialCharacter && hasUppercaseLetter가 참인지 거짓인지를 반환함
     }
 
-    private void findPW() { //signup 메소드로 id와 이름을 입력받음
+    public void findPW(String username, String name) { //signup 메소드로 id와 이름을 입력받음
         Connection conn = new JdbcConnection().getJdbc();
 
         LoginView loginView = new LoginView();
 
         LoginView.printpwView1();
-        username = sc.nextLine();
+        this.username = username;
         LoginView.printpwView2();
-        name = sc.nextLine();
+        this.name = name;
 
 
         try {
@@ -254,15 +258,15 @@ public class LoginModule extends ModuleBase{
         switch (controller.SelectMenu()){
             case 1:
                 //todo login
-                login();
+                login(username, password);
                 break;
             case 2:
                 //todo signup
-                signup();
+                signup(username, password, name);
                 break;
             case 3:
                 //todo find pw
-                findPW();
+                findPW(username,name);
                 break;
 
             case 0:

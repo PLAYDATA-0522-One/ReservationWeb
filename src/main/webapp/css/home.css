@@ -1,0 +1,20 @@
+body{
+    background: #f1f7fc;
+}
+
+.custom-box{
+    height: 100%;
+    padding:10px;
+    cursor:pointer;
+    flex: 1;
+    background-color: aliceblue;
+    border: deepskyblue 3px solid;
+}
+
+.card:hover{
+    background-color:#eee;
+}
+
+.card span{
+    font-size:20px;
+}

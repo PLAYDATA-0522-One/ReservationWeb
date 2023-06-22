@@ -16,7 +16,7 @@ public class Airplane {
     //도착지
     private String endDestination;
     //    좌석 리스트 생성
-    private List<String> seatList;
+    public List<String> seatList;
 
     public Airplane(int id, String airplaneName, Date departureTime, String startDestination, String endDestination, int totalRows, int seatsPerRow) {
         this.id = id;
@@ -27,7 +27,7 @@ public class Airplane {
         this.seatList = generateSeatList(totalRows, seatsPerRow);
     }
 
-    private List<String> generateSeatList(int totalRows, int seatsPerRow) {
+    public List<String> generateSeatList(int totalRows, int seatsPerRow) {
         List<String> seatList = new ArrayList<>();
 
         // 좌석 리스트 생성

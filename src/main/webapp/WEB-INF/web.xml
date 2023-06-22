@@ -68,5 +68,25 @@
     <url-pattern>/forgot</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>successServlet</servlet-name>
+    <servlet-class>Servlet.SuccessServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>successServlet</servlet-name>
+    <url-pattern>/success</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>failServlet</servlet-name>
+    <servlet-class>Servlet.FaliServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>failServlet</servlet-name>
+    <url-pattern>/fail</url-pattern>
+  </servlet-mapping>
+
 
 </web-app>

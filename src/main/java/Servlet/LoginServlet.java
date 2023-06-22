@@ -36,9 +36,9 @@ public class LoginServlet extends HttpServlet {
         if (loggedIn) {
             req.setAttribute("username",username);
             req.setAttribute("password", password);
-            req.getRequestDispatcher("success.css").forward(req, resp);
+            resp.sendRedirect("views/success.jsp");
         } else {
-            req.getRequestDispatcher("failure.jsp").forward(req, resp);
+            resp.sendRedirect("views/fail.jsp");
         }
     }
 

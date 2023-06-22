@@ -1,4 +1,3 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <head>
 
 
@@ -28,7 +27,7 @@
               </div>
 
               <div class="form-group form-primary">
-                <input type="text" class="form-control" name="username" value="" placeholder="Id"  id="username">
+                <input type="text" class="form-control" name="username"  placeholder="Id"  id="username">
 
               </div>
 

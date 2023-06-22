@@ -34,7 +34,7 @@
             </div>
             <div class="form-group"><button class="btn btn-success btn-block btn-info" type="submit">Login</button></div>
 
-            <a class="already" href="#">Terms of Use and Privacy Policy</a>
+            <a class="already" href="/main">Terms of Use and Privacy Policy</a>
         </form>
     </div>
 </div>

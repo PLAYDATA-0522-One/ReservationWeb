@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class SignupServlet extends HttpServlet {
+public class SignupServlet extends HttpServlet{
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher("views/signup.jsp").forward(req, resp);
@@ -24,17 +24,15 @@ public class SignupServlet extends HttpServlet {
 //        String passwordConfirm = req.getParameter("password_confirm");
 
         LoginModule signModule = getLoginModule();
-        System.out.println("fail");
         boolean signUp = signModule.signup(username, password, name);
-        System.out.println("SUCCESS");
         if (signUp) {
             req.setAttribute("username",username);
             req.setAttribute("password", password);
             req.setAttribute("name", name);
-            req.getRequestDispatcher("/success.jsp").forward(req, resp);
+            resp.sendRedirect("views/success.jsp");
         } else {
-            System.out.println("SUCCESS2");
-            req.getRequestDispatcher("/failure.jsp").forward(req, resp);
+
+            resp.sendRedirect("views/failure.jsp");
 
         }
 

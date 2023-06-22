@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-public class LoginModule extends ModuleBase{
+public class LoginModule extends ModuleBase {
     private final Scanner sc;
     private Integer id;
     private String username;
@@ -44,7 +44,7 @@ public class LoginModule extends ModuleBase{
         LoginView.printenterView3();
         this.password = password;
 
-        if (this.username.trim().isEmpty() ) { // 공백을 입력받을시 error를 출력함
+        if (this.username.trim().isEmpty()) { // 공백을 입력받을시 error를 출력함
             System.out.println("로그인 실패, 잘못된 입력입니다.");
             return false;
         }
@@ -68,7 +68,7 @@ public class LoginModule extends ModuleBase{
                 DataManager.getInstance().setUser(user);
                 System.out.println(this.username + " " + name0 + " 환영해요");
 
-                System.out.println(this.username + " " + name0+"님 환영합니다.");
+                System.out.println(this.username + " " + name0 + "님 환영합니다.");
 
                 return true;
             } else {
@@ -105,7 +105,8 @@ public class LoginModule extends ModuleBase{
         if (!isPasswordValid(password)) { // 패스워드가 유효를 메소드에서 검사함 (참인지것지인지)
             System.out.println("ERROR: 비밀번호가 적어도 한개 이상의 특수문자와 대문자를 포함해야 합니다.");
             return false;
-        }else{System.out.println("사용가능한 비밀번호입니다!");
+        } else {
+            System.out.println("사용가능한 비밀번호입니다!");
         }
 
         try {   //RreparedStatement클래스인 selectpsmt 인스턴스를 생성하고 천번째 매개변수에 username을 셋해줌
@@ -144,7 +145,7 @@ public class LoginModule extends ModuleBase{
             }
         }
 
-        return false;
+        return true;
     }
 
     private boolean isPasswordValid(String password) { //비밀번호가 반드시 한개의 특수문자나 대문자를 포함하는지 불린 메소드로 생성
@@ -172,7 +173,7 @@ public class LoginModule extends ModuleBase{
         return hasSpecialCharacter && hasUppercaseLetter; // 최종적으로  hasSpecialCharacter && hasUppercaseLetter가 참인지 거짓인지를 반환함
     }
 
-    public void findPW(String username, String name) { //signup 메소드로 id와 이름을 입력받음
+    public boolean findPW(String username, String name) { //signup 메소드로 id와 이름을 입력받음
         Connection conn = new JdbcConnection().getJdbc();
 
         LoginView loginView = new LoginView();
@@ -184,54 +185,20 @@ public class LoginModule extends ModuleBase{
 
 
         try {
-            // Sqlx에 db에서 입력 받아온 password를 저장
+
             String Sqlx = "SELECT password FROM user WHERE username = ? and name=?";
             PreparedStatement beforePsmt = conn.prepareStatement(Sqlx);
             beforePsmt.setString(1, username);
             beforePsmt.setString(2, name);
             ResultSet resultSet = beforePsmt.executeQuery();
-            String password; // password 초기값 지정
+            String password = null; // password 초기값 지정
 
             if (!resultSet.next()) { ////resultSet의 다음으로 오는 값 즉, 초기값이 쿼리에 있는 username이 db에 있다면 if문 실행하고 if문 종료
                 System.out.println("ERROR: 회원 정보가 없습니다.");
-                return;
+
             } else {
                 password = resultSet.getString("password");
             }
-
-            // 새로운 비밀번호를 입력함
-            System.out.print("새로운 비밀번호를 입력해주세요: ");
-            newPassword = sc.nextLine();
-
-
-            if (newPassword.equals(password)){ // 비밀번호가 중복될시 메소드 종료
-                System.out.println("비밀번호가 중복됩니다.");
-                return;
-            }
-
-            if (!isPasswordValid(newPassword)) { // 패스워드가 유효를 메소드에서 검사함 (참인지것지인지)
-                System.out.println("ERROR: 비밀번호가 적어도 한개 이상의 특수문자와 대문자를 포함해야 합니다.");
-                return;
-            } else {
-                System.out.println("변경가능한 비밀번호입니다!");
-            }
-
-
-
-            String updateSql = "UPDATE user SET password = ? WHERE username = ?"; //user의 다음 항목들을 각각 값으로 insertsql로 선언함
-            PreparedStatement updatePsmt = conn.prepareStatement(updateSql);
-            updatePsmt.setString(1, newPassword);
-            updatePsmt.setString(2, username);
-            Integer resultUpdate = updatePsmt.executeUpdate();
-
-
-            if (resultUpdate == 1) {
-                System.out.println("비밀번호가 변경되었습니다");
-                return;
-            } else {
-                System.out.println("회원정보 변경 실패, 사용자 이름이나 비밀번호가 잘못되었습니다.");
-            }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -243,7 +210,44 @@ public class LoginModule extends ModuleBase{
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+
         }
+        return true;
+    }
+
+
+    public boolean changePW (String username, String newPassword){
+        Connection conn = new JdbcConnection().getJdbc();
+        try {
+
+            String updateSql = "UPDATE user SET password = ? WHERE username = ?"; //user의 다음 항목들을 각각 값으로 insertsql로 선언함
+            PreparedStatement updatePsmt = conn.prepareStatement(updateSql);
+            updatePsmt.setString(1,newPassword);
+            updatePsmt.setString(2,username);
+            Integer resultUpdate = updatePsmt.executeUpdate();
+
+
+            if (resultUpdate == 1) {
+                System.out.println("비밀번호가 변경되었습니다");
+
+            } else {
+                System.out.println("회원정보 변경 실패, 사용자 이름이나 비밀번호가 잘못되었습니다.");
+            }
+        }
+
+         catch(SQLException e){
+                    throw new RuntimeException(e);
+                } finally{
+                    try {
+                        // If the DB connection is not null, close it
+                        if (conn != null) {
+                            conn.close();
+                        }
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        return true;
     }
 
     @Override

@@ -44,7 +44,7 @@ public class EditModule extends ModuleBase {
                 break;
             case 2:
 //                TODO: 비행기 데이터 추가
-                insertAirplane();
+                //insertAirplane();
                 break;
             case 3:
 //                TODO: 비행기 데이터 삭제
@@ -72,9 +72,9 @@ public class EditModule extends ModuleBase {
         }
     }
 
-    private void getAirPlaneList_by_Database() {
+    public List<Airplane> getAirPlaneList_by_Database() {
         // 비행기 리스트 요소 clear
-        airplaneList.clear();
+        List<Airplane> result = new ArrayList<>();
 
         //db에서 airplane 테이블 정보 가져오기
         Connection conn = new JdbcConnection().getJdbc();
@@ -92,7 +92,7 @@ public class EditModule extends ModuleBase {
 
                 // 리스트에 비행기 정보 추가
                 Airplane p = new Airplane(id, airplane_name, departure_time, start_destination, end_destination, 5, 4);
-                airplaneList.add(p);
+                result.add(p);
             }
         } catch (SQLException e) {
             System.out.println("show air plane error");
@@ -105,9 +105,11 @@ public class EditModule extends ModuleBase {
         } catch (SQLException e) {
             System.out.println("sql close fail");
         }
+
+        return result;
     }
 
-    private void insertAirplane() {
+    public boolean insertAirplane(String airplaneName, String date, String startDestination, String endDestination) {
         // 비행기 테이블에 비행기 정보 임의로 insert
         Connection conn = new JdbcConnection().getJdbc();
 
@@ -116,32 +118,28 @@ public class EditModule extends ModuleBase {
 
         try {
             PreparedStatement pst = conn.prepareStatement(sql);
-
-            view.printAirplaneInfo(1);
-            String airplaneName = sc.nextLine();
-            view.printAirplaneInfo(2);
-            String startDestination = sc.nextLine();
-            view.printAirplaneInfo(3);
-            String endDestination = sc.nextLine();
-
             pst.setString(1, airplaneName);
-            pst.setDate(2, new Date(Calendar.getInstance().getTimeInMillis()));
+            pst.setDate(2, Date.valueOf(date));
             pst.setString(3, startDestination);
             pst.setString(4, endDestination);
 
             if (pst.executeUpdate() == 0) {
                 System.out.println("insert airplane error");
             } else {
-                view.printSuccess();
+                System.out.println("insert airplane 성공");
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println("쿼리 확인");
+            return false;
         }
         try {
             conn.close();
         } catch (SQLException e) {
             System.out.println("sql close fail");
+            return false;
         }
+
+        return true;
     }
 
     private void deleteAirplane() {
